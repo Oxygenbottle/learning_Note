@@ -279,24 +279,102 @@ class MyPromise {
         };
 
         const promise2 = new MyPromise((resolve, reject) => {
+            const fulfilledMicrotask = () => {
+                queueMicrotask(()=> {
+                    try{
+                        const x = realOnFulfilled(this.value);
+                        this.resolvePromise(promise2 ,x ,resolve ,reject);
+                    }catch(e) {
+                        reject(e);
+                    }
+                }
+            });
+            const rejectedMicrotask = () => {
+                queueMicrotask(()=> {
+                    try{
+                        const x = realOnRejected(this.reason);
+                        this.resolvePromise(promise2 ,x ,resolve ,reject);
+                    }catch(e) {
+                        reject(e);
+                    }
+                }
+            });
             switch (this.status) {
                 case PENDING: {
                     // 如果状态还没有改编成终态，则需要先将回调存入数组，然后对status进行监听，变成终态时再便利执行。
-                    this.FULFILLED_CALLBACK_LIST.push(realOnFulfilled);
-                    this.REJECTED_CALLBACK_LIST.push(realOnRejected);
+                    this.FULFILLED_CALLBACK_LIST.push(fulfilledMicrotask);
+                    this.REJECTED_CALLBACK_LIST.push(rejectedMicrotask);
                     break;
                 }
                 case FULFILLED: {
-                    realOnFulfilled();
+                    fulfilledMicrotask();
                     break;
                 }
                 case REJECTED: {
-                    realOnRejected();
+                    rejectedMicrotask();
                     break;
                 }
             }
         });
         return promise2;
+    }
+
+    catch (onRejected) {
+        return this.then(null, onRejected);
+    }
+    
+    // 不太理解为什么要判断x 和promise
+    resolvePromise(promise2, x, resolve, reject) { 
+        // 如果 newPromise he x指向同一对象，以 TypeError 为据因拒绝执行 newPromise
+        // 为了防止死循环
+        if(promise2 === x){
+            return reject(new TypeErroer('The promise and then return value are the same'))
+        }
+
+        if(x instanceof MyPromise) {
+            // 如果 x 为promsie ,则使 newPromise 接受 x 的状态
+            //  也是继续执行x，如果执行的时拿到一个y， 那么要继续解析y
+            queueMicrotask(()=>{
+                x.then(y=>{
+                    this.resolvePromise(promise2, y, resolve, reject);
+                }, reject)
+            })
+        } else if(typeof x === 'object' || this.isFunction(x)){
+            if(x === null){
+                return resolver(x);
+            }
+
+            let then = null;
+
+            try{
+                then = x.then;
+            }catch(error) {
+                return reject(error);
+            }
+
+            if(this.isFunction(then)) {
+                let called =  false;
+
+                try{
+                    then.call(
+                        x,
+                        (y)=>{
+                            if(called) return;
+                            called = true;
+                            this.resolvePromise(promise2, y, resolve, reject);
+                        },
+                        (r)=>{
+                            if(called) return;
+                            called = true;
+                            reject(r);
+                        }
+                    )
+                }catch(err){
+                    if(called) return;
+                    reject(err);
+                }
+            } else resolve(x);
+        }else resolve(x);
     }
     
     // 公共方法类
