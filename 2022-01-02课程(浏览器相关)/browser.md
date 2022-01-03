@@ -188,5 +188,168 @@ fetch('http://domain/service',{
 }).catch( error => {
     console.log(error);
 })
+```
+> (本身不支持)封装超时
+```js
+function fetchTimeout(url, init, timeout = 3000) {
+    return new Promise((resolve, reject) =>{
+        fetch(url, init).then(resolve).catch(reject); 
+        // 这里上方的逻辑是正常运行的，与下方setTimeout同步，
+        // 然后 promise的状态也应该是正常改变的，
+        // 如果在事件内先进行了resolve/reject 改变了promise 的status;
+        // 则下方的超时就无效，反之则超时
+        setTimeout(reject, timeout); // 超时执行
+    })
+} 
+```
+>课后作业
+function xx(fn ,timeout) {
+    ...
+}
 
+
+#### 中断fetch
+```js
+    const controller = new AbortController(); //定义
+    fetch('http://domain/service',{
+        methods: 'GET',
+        credentials: 'same-origin'，
+        signal: controller.siganal // 引用
+    }).then( res => {
+        if(res.ok) {
+            //请求成功
+            return res.json();
+        }
+        throw new Error('http error')
+    }).then( json => {
+        console.log(json);
+    }).catch( error => {
+        console.log(error);
+    })
+
+    controller.abort(); // 调用
+```
+
+#### request header 请求头
+`method`
+`path`
+`cookie`
+> 面试题
+cdn 域名 和 业务域名不相同
+// www.baidu.com  业务域名
+// cdn.baidu-aa.com  cdn域名
+> 答
+> 1. 安全问题
+不愿意将自己的用户信息，暴露给第三方的cdn厂商
+>2. cdn
+request header 会携带cookie，浪费更多资源,带宽占用
+>3. 并发请求数(http1.1-有同域最大限制)
+http2.0 没有最大限制
+
+`referer`: 判断当前浏览器来自哪个页面
+// 标识访问路径
+
+`user-agent`: aweme_11.x.xx(抖音) 
+//用于判断不同APP环境或者手机环境 ios/安卓
+
+#### response header
+`access-control-allow-origin`: http://www.baidu.com
+//只允许百度 *:任意
+`content-encoding`: gzip
+`set-cookie`: 
+
+#### status /状态
+200
+201
+301 永久重定向
+302 临时重定向
+304 协商缓存，服务器文件未修改
+>http 缓存分为：强缓存，协商缓存
+强缓存：
+>> max-age: 1000接收时间偏移来判断过期(更好)
+>> expired: 时间节点判断过期，服务器时间不校对时，会出现误差
+>
+>协商缓存：
+>>last-modified: 上一次修改时间（打开关闭就会修改）
+>>etag: 使用哈希 来判断是否有修改
+
+####面试题
+> vue/react spa单页面
+都会有一个index.html 入口文件
+针对index.html 如果要缓存，用什么缓存
+答  
+index.html一般不做缓存
+如果一定要做，做协商缓存
+index.html没有hash
+
+```ts
+interface IOptions {
+    url: string;
+    type?: "GET" | "POST";
+    data: any:
+    timeout?: number;
+}
+
+function formatUrl(object) {
+    // a=xxx ; queryString
+    let dataArr = [];
+    for(let key in object){
+        dataArr.push(`${key}=${encodeURIComponent(object[key])}`)
+    } 
+    return dataArr.join("&")
+}
+
+export function ajax(options:IOptions = {
+    type: "GET",
+    data: {},
+    timeout: 3000,
+    url: ""
+}){
+    return new Promise((resolve, reject) =>{
+        if(!options.url) {
+            return;
+        }
+
+        const queryString = formatUrl(options.data);
+        const onStateChange = () => {
+            xhr.onreadystatechange = () =>{
+                if(xhr.readyState === 4) {
+                    clearTimeout(timer)
+                    if(xhr.status >== 200 && xhr.status < 300 || xhr.status === 304) {
+                        resolve(xhr.responseText);
+                    } else {
+                        reject(xhr.status);
+                    }
+                }
+            }
+        }
+        let timer;
+        let xhr;
+        // 这里的window 其实需要用一个单独的ts文件来定义
+        if( (window as any).XMLHttpRequest) {
+            xhr = new XMLHttpRequest();
+        }else {
+            xhr = new XMLHttpRequest("Microsoft.XMLHTTP");
+        }
+
+        if(options.type.toUperCase() === "GET") {
+            xhr.open("GET", `${options.url}?${queryString}`);
+            onStateChange();
+        }else if(options.type.toUperCase() === "POST") {
+            xhr.open("PSOT", options.url);
+            xhr.setRequestHeader(
+                "ContentType": "application / x-www-form-urlencoded"
+            );
+        }
+
+       
+
+        if(options.timeout) {
+            timer = setTimeout(() =>{
+                xhr.abort();
+                reject('timeout')
+            }, options.timeout);
+        }
+    });
+}
 ```
