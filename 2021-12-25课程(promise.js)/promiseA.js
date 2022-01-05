@@ -2,40 +2,44 @@ const PENDING = 'pending';
 const FULFILLED = 'fulfilled';
 const REJECTED = 'rejected';
 
-class MPromise {
-
+class MyPromise {
+    //异步待执行数组
     FULFILLED_CALLBACK_LIST = [];
     REJECTED_CALLBACK_LIST = [];
     _status = PENDING;
+    //getter/setter监听status改变  
+
     constructor(fn) {
-        // 初始状态为pending
         this.status = PENDING;
         this.value = null;
         this.reason = null;
+
+        // 执行传入函数，例如平时封装方法，或者封装的http请求
         try {
+            // 将传入方法的this指向MyPromise
             fn(this.resolve.bind(this), this.reject.bind(this));
-        } catch (e) {
-            this.reject(e);
+        } catch (error) {
+            this.reject(error);
         }
     }
 
     get status() {
         return this._status;
     }
-
+    // 监听status的值，本质就是监听resolve/reject，将待执行数组便利执行
     set status(newStatus) {
         this._status = newStatus;
         switch (newStatus) {
             case FULFILLED: {
                 this.FULFILLED_CALLBACK_LIST.forEach(callback => {
                     callback(this.value);
-                });
+                })
                 break;
             }
             case REJECTED: {
                 this.REJECTED_CALLBACK_LIST.forEach(callback => {
-                    callback(this.reason);
-                });
+                    callback(this.value);
+                })
                 break;
             }
         }
@@ -54,73 +58,78 @@ class MPromise {
             this.status = REJECTED;
         }
     }
-
+    // 操作then方法， .then( res=> { ... } ，平时不传，但是catch取的就是onRejected)
     then(onFulfilled, onRejected) {
+        // 先判断是否是方法，否则直接传出，避免后续其他问题
         const realOnFulfilled = this.isFunction(onFulfilled) ? onFulfilled : (value) => {
-            return value
+            return value;
         }
+
         const realOnRejected = this.isFunction(onRejected) ? onRejected : (reason) => {
             throw reason;
-        };
-        const promise2 = new MPromise((resolve, reject) => {
-            const fulfilledMicrotask = () => {
+        }
+
+        // .then内部应该是放到新的微任务中，所以用了queueMicrotask(()=> {})
+        const promise2 = new MyPromise((resolve, reject) => {
+            const fulfilledMicotack = () => {
                 queueMicrotask(() => {
+                    // 对所有报错都需要抛出
                     try {
+                        // 如果.then中的方法是另一个异步/延时的方法，那么就要进行下一步解析: resolvePromise
                         const x = realOnFulfilled(this.value);
                         this.resolvePromise(promise2, x, resolve, reject);
-                    } catch (e) {
-                        reject(e)
+                    } catch (error) {
+                        reject(error);
                     }
                 })
-            };
-            const rejectedMicrotask = () => {
+            }
+            const rejectedMicotack = () => {
                 queueMicrotask(() => {
                     try {
                         const x = realOnRejected(this.reason);
                         this.resolvePromise(promise2, x, resolve, reject);
-                    } catch (e) {
-                        reject(e);
+                    } catch (error) {
+                        reject(error);
                     }
                 })
             }
 
+
             switch (this.status) {
                 case FULFILLED: {
-                    fulfilledMicrotask()
+                    fulfilledMicotack();
                     break;
                 }
                 case REJECTED: {
-                    rejectedMicrotask()
+                    rejectedMicotack();
                     break;
                 }
                 case PENDING: {
-                    this.FULFILLED_CALLBACK_LIST.push(fulfilledMicrotask)
-                    this.REJECTED_CALLBACK_LIST.push(rejectedMicrotask)
+                    // 因为fn方法耗时，在宏任务已经执行完毕后，调用.then中的微任务时，this.status的值还是为PENDING
+                    this.FULFILLED_CALLBACK_LIST.push(fulfilledMicotack);
+                    this.REJECTED_CALLBACK_LIST.push(rejectedMicotack);
+                    break;
                 }
             }
-        })
-        return promise2
-
+        });
+        return promise2;
     }
 
+    //实例方法
     catch (onRejected) {
         return this.then(null, onRejected);
     }
 
-    isFunction(param) {
-        return typeof param === 'function';
-    }
-
     resolvePromise(promise2, x, resolve, reject) {
         // 如果 newPromise 和 x 指向同一对象，以 TypeError 为据因拒绝执行 newPromise
-        // 这是为了防止死循环
+        // 这是为了防止死循环（个人理解：return 出来的东西和内部执行的东西一样，会出现死循环）
         if (promise2 === x) {
-            return reject(new TypeError('The promise and the return value are the same'));
+            return reject(new TypeError('The promise and the return value are the same'))
         }
-
-        if (x instanceof MPromise) {
-            // 如果 x 为 Promise ，则使 newPromise 接受 x 的状态
-            // 也就是继续执行x，如果执行的时候拿到一个y，还要继续解析y
+        // instanceof 运算符用于检测构造函数的 prototype 属性是否出现在某个实例对象的原型链上
+        if (x instanceof MyPromise) {
+            // 如果传入的 x 也就是realOnFulfilled(this.value) 不等于promise2，
+            // 也是一个Promise，则使 newPromise 接收 x 的状态,然后继续执行x，如果执行时候拿到的 y 也是 Promise，就还要继续解析 y。
             queueMicrotask(() => {
                 x.then((y) => {
                     this.resolvePromise(promise2, y, resolve, reject);
@@ -136,24 +145,21 @@ class MPromise {
             let then = null;
 
             try {
-                // 把 x.then 赋值给 then 
                 then = x.then;
             } catch (error) {
-                // 如果取 x.then 的值时抛出错误 e ，则以 e 为据因拒绝 promise
                 return reject(error);
             }
 
-            // 如果 then 是函数
             if (this.isFunction(then)) {
                 let called = false;
                 // 将 x 作为函数的作用域 this 调用
-                // 传递两个回调函数作为参数，第一个参数叫做 resolvePromise ，第二个参数叫做 rejectPromise
+                // 传递两个回调作为参数，第一个参数： resolvePromise ,第二个参数 rejectPromise
                 try {
+                    // function.call(thisArg, arg1, arg2, ...)
                     then.call(
                         x,
                         // 如果 resolvePromise 以值 y 为参数被调用，则运行 resolvePromise
                         (y) => {
-                            // 需要有一个变量called来保证只调用一次.
                             if (called) return;
                             called = true;
                             this.resolvePromise(promise2, y, resolve, reject);
@@ -163,12 +169,10 @@ class MPromise {
                             if (called) return;
                             called = true;
                             reject(r);
-                        });
+                        }
+                    )
                 } catch (error) {
-                    // 如果调用 then 方法抛出了异常 e：
                     if (called) return;
-
-                    // 否则以 e 为据因拒绝 promise
                     reject(error);
                 }
             } else {
@@ -181,48 +185,25 @@ class MPromise {
         }
     }
 
-    static resolve(value) {
-        if (value instanceof MPromise) {
-            return value;
-        }
-
-        return new MPromise((resolve) => {
-            resolve(value);
-        });
+    isFunction(param) {
+        return typeof param === 'function'
     }
 
-    static reject(reason) {
-        return new MPromise((resolve, reject) => {
-            reject(reason);
-        });
-    }
-
-    static race(promiseList) {
-        return new MPromise((resolve, reject) => {
-            const length = promiseList.length;
-
-            if (length === 0) {
-                return resolve();
-            } else {
-                for (let i = 0; i < length; i++) {
-                    MPromise.resolve(promiseList[i]).then(
-                        (value) => {
-                            return resolve(value);
-                        },
-                        (reason) => {
-                            return reject(reason);
-                        });
-                }
-            }
-        });
-
-    }
+    // static resolve(value) {
+    //     if (value instanceof MyPromise) {
+    //         return value;
+    //     }
+    // }
 }
 
-const test = new MPromise((resolve, reject) => {
+const test = new MyPromise((resolve, reject) => {
+    let time = new Date();
+    console.log('seconds')
     setTimeout(() => {
-        resolve(111);
-        // reject(111);
+        if (time.getSeconds() % 2 == 0) {
+            resolve('偶数秒' + time.getSeconds());
+        }
+        reject('奇数秒' + time.getSeconds());
     }, 1000);
 }).then((value) => {
     console.log(value, 'then');
