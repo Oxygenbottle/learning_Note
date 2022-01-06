@@ -2,14 +2,68 @@
 ### 1. 历史
 #### 背景
 它的设计者Brendon Eich因为所任职的网景公司开发的浏览器Navigator需要一个脚本语言能去实现浏览器与网页互动的需求,并且搭配JAVA使用。
-> IIFE - 立即执行函数
+> JS的模块化需求日益增长
+
+#### 幼年期：无模块化
+1.  需要在页面中增加一些不同js：动画、表单、格式化等
+2.  多种js文件被分在不同的文件中
+3.  不同的文件又被同一个模板引用
+
+```js
+<script src="jquery.js"></script>
+<script src="mian.js"></script>
+<script src="dep1.js"></script>
+```
+* 认可：以上就是最基础的模块化的第一步
+* 问题：污染全局作用域 => 不利于大型项目以及多人团队的共建
+
+#### 成长期： 模块化的雏形 - IIFE（立即执行函数）
+例子：
+```js
+ let count = 0;
+ const increase = () => ++count;
+
+ const reset = () => {
+     count = 0;
+ }
+
+ increase();
+ reset();
+```
+
+利用函数块级作用域
+>
 ```js
     (()=>{
         let count  = 0;
+        // .....
     })
 ```
+仅定义了一个函数，如果立即执行
+```js
+( () => {
+    let count = 0;
+    //.....
+})();
+```
+上面就是最最最简单的模块
 
-IIFE-闭包封装
+尝试定义 一个简单模块
+```js
+const lifetModule = (()=>{
+    let count = 0;
+    return {
+        increase: 90 => ++count;
+        reset: () => {
+            count = 0;
+        }
+    }
+})();
+
+lifeModule.increase();
+lifeModule.reset();
+```
+
 ```js
 const lifeModule = (() => {
     let count = 0;
@@ -24,26 +78,10 @@ const lifeModule = (() => {
 lifeModule.increase();//调用
 lifeModule.reset();//调用
 ```
-
-
+**追问：有额外依赖时，如何优化IIFE相关代码**
 > 优化1： 依赖其他代码的IIFE
-```js
-const lifeModule = (() => {
-    let count = 0;
-    return {
-        increase: ()=> ++count,
-        reset: ()=>{
-            count = 0;
-        }
-    }
-})();
-
-lifeModule.increase();//调用
-lifeModule.reset();//调用
-```
 
 实际上，Jquery等框架其实应用了 revealing（揭示模式） 的写法：
-
 API定义在函数中，只是暴露函数的接口
 ```js
 const lifeModule = ((dependencyModule1,dependencyModule2) => {
