@@ -43,20 +43,19 @@
 ```js
 ( () => {
     let count = 0;
-    //.....
+    // count 仅仅作用在这个函数块内
 })();
 ```
-上面就是最最最简单的模块
+// 这里定义了作用于，声明了函数，然后立即执行
+如果声明多个这样的匿名函数，他们之间就互相隔离开，上面就是最简单的模块
 
 尝试定义 一个简单模块
 ```js
-const lifetModule = (()=>{
+const lifeModule = (()=>{
     let count = 0;
     return {
-        increase: 90 => ++count;
-        reset: () => {
-            count = 0;
-        }
+        increase: () => ++count;
+        reset: () => count = 0;
     }
 })();
 
@@ -64,20 +63,6 @@ lifeModule.increase();
 lifeModule.reset();
 ```
 
-```js
-const lifeModule = (() => {
-    let count = 0;
-    return {
-        increase: ()=> ++count,
-        reset: ()=>{
-            count = 0;
-        }
-    }
-})();
-
-lifeModule.increase();//调用
-lifeModule.reset();//调用
-```
 **追问：有额外依赖时，如何优化IIFE相关代码**
 > 优化1： 依赖其他代码的IIFE
 
@@ -87,17 +72,27 @@ API定义在函数中，只是暴露函数的接口
 const lifeModule = ((dependencyModule1,dependencyModule2) => {
     let count = 0;
     return {
-        const increase = ()=> ++count,
-        const reset = ()=>{
-            count = 0;
-        }
-        return {
-            increase,reset
-        }
+        increase: ()=> ++count;
+        reset: ()=> count = 0;
     }
 })(dependencyModule1,dependencyModule2);
 lifeModule.increase();
 lifeModule.reset();
+```
+
+**面试1： 了解早起的jquery的以来处理以及模块加载方案吗？**
+**了解传统IIFE是如何解决多方依赖的问题**
+答：IIFE加传参调配
+
+```js 
+const leftModule = ((dependencyModule1, dependencyModule2) => {
+    let count = 0;
+    const increase = () => ++count;
+    const reset = () => count = 0;
+    return{
+        increase, reset
+    }
+}) (dependencyModule1, dependencyModule2)
 ```
 
 ####成熟期：
