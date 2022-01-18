@@ -80,9 +80,9 @@ lifeModule.increase();
 lifeModule.reset();
 ```
 
-**面试1： 了解早起的jquery的以来处理以及模块加载方案吗？**
+**面试1： 了解早期的jquery的以来处理以及模块加载方案吗？**
 **了解传统IIFE是如何解决多方依赖的问题**
-答：IIFE加传参调配
+> 答：IIFE加传参调配
 
 ```js 
 const leftModule = ((dependencyModule1, dependencyModule2) => {
@@ -92,17 +92,19 @@ const leftModule = ((dependencyModule1, dependencyModule2) => {
     return{
         increase, reset
     }
-}) (dependencyModule1, dependencyModule2)
+}) (dependencyModule1, dependencyModule2);
+leftModule.increase();
+leftModule.reset();
 ```
 
-####成熟期：
+#### 成熟期：
 ##### CJS - CommonJS
-> node.js制定
+**node.js制定**
 特征：
->* 通过
->* 通过
+* 通过`module` + `exports` 去对外暴露接口
+* 通过`require`来调用其他模块
 
-模块组织方式mian.js文件
+模块组织方式`mian.js`文件
 
 ```js
 // 引入部分
@@ -112,48 +114,116 @@ const dependencyModule2 = require(./dependencyModule2)
 //处理部分
 let count = 0;
 const increase = ()=> ++count;
+const reset = () count = 0;
+// 引入依赖内部操作等相关事宜...
 
-// 暴露接口部分
+// 暴露接口部分，将接口抛出
 exports.increase = increase;
-
+exports.reset = reset;
+// 或者用以下方法暴露接口
+// exports就是在JS最上方var exports = module.exports;
 module.exports = {
-
+    increase, reset
 }
 ```
 
 模块使用方式
 ```js
-cosnt {increase, reset} = require('./main.js')
+const {increase, reset} = require('./main.js')
+
 increase();
-reser();
+reset();
 ```
+
+**可能问到的问题**
 
 实际执行处理
 ```js
-()
+(function (thisValue, exports, require, module){
+    const dependencyModule1 = require('./dependencyModule1')
+    const dependencyModule2 = require('./dependencyModule2')
+}).call(thisValue, exports, require, module);
 ```
+>* 优点：
+CommonJS率先在服务端实现了，从框架层面解决依赖、全局变量污染的问题
+>* 缺点：
+因为只针对服务端的解决方案，文件依赖等拉取都是本地操作，对于异步拉取依赖的处理整合不是那么的有好。
 
-####  AMD规范
+**新的问题 —— 异步依赖**
+
+####  AMD："Asynchronous Module Definition"-"异步模块定义"
 > 解决了异步加载 + 允许制定回调函数
 经典实现框架是： require.js
 
+####  AMD引入
+```js
+<script src="./require.js"></script>
+```
+// 但是单独加载文件，可能会造成页面失去响应，解决办法一个是把他放在页面底部最后加载，另一个是写成下面这样：
+```js
+<script src="./require.js" defer async="true"></script>
+```
+`async` 文件需要异步加载（IE不支持）
+`defer` 支持IE
+假定我们自己代码文件是`main.js`，也放在js目录下面。那么只要写成下面这种：
+```js
+<script src="./require.js" data-main="2021-12-26(module.js)/main"></script>
+```
+`data-main`置顶网页程序的主模块。这个文件会被require.js加载。由于同为`js`文件，所以`main.js`简写成`main`。
+####  AMD规范
 
-新增定义方式：
+**新增定义方式：**
 ```js
     // 通过define 来定义一个模块，然后require进行加载
     /*
-    define
-
+    define(params)
+    params: 模块名, 依赖模块， 工厂方法
     */
-    define(id, [depends],callback);
+    define(id, [depends], callback);
+    require([module], callback)
 ```
 
-新增定义方式：
+**模块定义方式：**
 ```js
-define('amdModule',)
+define('amdModule',['dependencyModule1','dependencyModule2'],(dependencyModule1,dependencyModule2) => {
+    // 业务逻辑
+    // 处理部分
+    let count = 0;
+    const increase = () => ++count;
+    const reset = () => count = 0;
+
+    return {
+        increase, reset
+    }
+})
+```
+**引入模块**
+```js
+    require(['amdModule'],amdModule => {
+        amdModule.increase();
+    })
 ```
 
-##面试题2： AMD
+**面试题2： AMDmodule中想兼容已有代码，怎么办**
+```js
+define('amdModule', [], require => {
+    // 引入部分
+    const dependencyModule1 = require('./dependencyModule1')
+    const dependencyModule2 = require('./dependencyModule2')
+
+    // 处理部分
+    let count = 0;
+    const increase = () => ++count;
+    const reset = () = count = 0;
+
+    // 做一些跟引入依赖相关事宜
+
+    return {
+        increase, reset
+    }
+})
+```
+
 
 
 #### ES6模块化
