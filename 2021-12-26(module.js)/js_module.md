@@ -159,6 +159,7 @@ CommonJS率先在服务端实现了，从框架层面解决依赖、全局变量
 ```js
 <script src="./require.js"></script>
 ```
+
 // 但是单独加载文件，可能会造成页面失去响应，解决办法一个是把他放在页面底部最后加载，另一个是写成下面这样：
 ```js
 <script src="./require.js" defer async="true"></script>
@@ -166,10 +167,12 @@ CommonJS率先在服务端实现了，从框架层面解决依赖、全局变量
 `async` 文件需要异步加载（IE不支持）
 `defer` 支持IE
 假定我们自己代码文件是`main.js`，也放在js目录下面。那么只要写成下面这种：
+
 ```js
 <script src="./require.js" data-main="2021-12-26(module.js)/main"></script>
 ```
-`data-main`置顶网页程序的主模块。这个文件会被require.js加载。由于同为`js`文件，所以`main.js`简写成`main`。
+`data-main`置顶网页程序的主模块。这个文件会被`require.js`加载。由于同为`js`文件，所以`main.js`简写成`main`。
+
 ####  AMD规范
 
 **新增定义方式：**
@@ -199,9 +202,9 @@ define('amdModule',['dependencyModule1','dependencyModule2'],(dependencyModule1,
 ```
 **引入模块**
 ```js
-    require(['amdModule'],amdModule => {
-        amdModule.increase();
-    })
+require(['amdModule'],amdModule => {
+    amdModule.increase();
+})
 ```
 
 **面试题2： AMDmodule中想兼容已有代码，怎么办**
@@ -224,14 +227,78 @@ define('amdModule', [], require => {
 })
 ```
 
+**面试题3： AMD中使用revealing**
+```js
+    define('amdModule', [], (require, export ,module)=>{
+        // 引入
+        const dependencyModule1 = require('./dependencyModule1');
+        const dependencyModule2 = require('./dependencyModule2');
 
+        // 处理
+        let count = 0;
+        const increase = () => ++count;
+        const reset = () => count = 0;
+
+        // 引入依赖相关
+        export.increase = increase;
+        export.reset = reset;
+
+        define("amdModule", [], require => {
+            const otherModule = require("amdModule");
+            otherModule.increase();
+            otherModule.reset();
+        })
+    })
+```
+**面试题4：兼容AMD&CJS/如何判断CJS和AMD**
+UMD的出现
+```js
+    (define("amdModule", [], (require, export, module) => {
+        const dependencyModule1 = require('./dependencyModule1');
+        const dependencyModule2 = require('./dependencyModule2');
+
+        // 处理
+        let count = 0;
+        const increase = () => ++count;
+        const reset = () => count = 0;
+
+        // 引入依赖相关
+        export.increase = increase;
+        export.reset = reset;
+    })(
+        // 一次性区分CommonJS or AMD
+        typeof module === "object" && module.exports && typeof define !== "function"
+            ?
+            factory => module.exports = factory(require, exports, module)
+            :
+            define
+    )
+```
+>* 优点：适合在浏览器中加载异步模块，可以并行加载多个模块
+>* 缺点：会有引入成本，不能按需加载
+
+#### CMD规范
+* 按需加载
+主要应用框架`sea.js`
+```js
+  define('module', (require, export, module) => {
+    let $ = require("jquery");
+    // jquery相关逻辑
+
+    let dependencyModule1 = require("./dependencyModule1");
+    // dependencyModule1相关逻辑
+  })
+```
+>* 优点：按需加载，依赖就近
+>* 依赖于打包，家在逻辑存在于每个模块中，扩大模块体积
+
+**面试题5： AMD&CMD区别**
+答：依赖就近，按需加载
 
 #### ES6模块化
-> 
-
 新增定义：
-引入关键字 —— import
-导出关键字 —— export 
+引入关键字 —— `import`
+导出关键字 —— `export`
 
 模块映入、导出和定义的地方：
 ```js
@@ -240,24 +307,115 @@ define('amdModule', [], require => {
     import denpendencyModule2 from './denpendencyModule2.js'
 
     //处理部分
+    // 实现代码逻辑
     let count = 0;
+    export const increase = () => ++count;
+    export const reset = () => count = 0;
 
     //导出区域
-    export const reset = () =>{};
-    export { reset }
+    // export { reset }
     export default{
-        reset,
+        increase, reset
     }
 ```
+引入的地方
+```js
+    <script type="module" src="esModule.js"></script>
+```
+node中：
+```js
+    import { increase, reset } from "./esModule.mjs";
+    increase();
+    reset();
+    // 或者
+    import esModule from "./esModule.mjs";
+    esModule.increase();
+    esModule.reset();
+```
 
+**面试题6：动态模块**
 
 ### 解决模块化最终方案 - 前端工程化
 #### 背景
+根本问题 - 运行时进行依赖分析
+> 前端的模块化处理方案依赖于运行时分析
+
+解决方案：线下执行
+grunt gulp webpack
+
+```js
+<!DOCTYPE html>
+    <script src="main.js"></script>
+    <script>
+      // 给构建工具一个标示位
+      require.config(__FRAME_CONFIG__);
+    </script>
+    <script>
+      require(['a', 'e'], () => {
+        // 业务处理
+      })
+    </script>
+</html>
+```
+```js
+  define('a', () => {
+    let b = require('b');
+    let c = require('c');
+
+    export.run = () {
+        // run
+    }
+  })
+```
+
+##### 工程化实现
+* step1: 扫描依赖关系表：
+```js
+{
+    a: ['b', 'c'],
+    b: ['d'],
+    e: [],
+}
+```
+* step2: 重新生成依赖数据模板
+```js
+    <!DOCTYPE html>
+        <script src="main.js"></script>
+        <script>
+            // 构建工具生成数据
+            require.config({
+                "deps": {
+                    a: ['b', 'c'],
+                    b: ['d'],
+                    e: []
+                }
+            })
+        </script>
+        <script>
+            require(['a', 'b'], () => {
+                // 业务处理
+            })
+        </script>
+    </html>
+```
+
+* step3: 执行工具，采用模块化方案解决模块化处理依赖
+```js
+    define('a', ['b', 'c'], () => {
+        // 执行代码
+        export.run = () =>{}
+    })
+```
+> 优点：
+1. 构建时生成配置，运行时执行
+2. 最终转化成执行处理依赖
+3. 可以拓展
+
+#### 完全体 webpack为核心的工程化 + mvvm框架组件化 + 设计模式
 
 
 
 
-
-#####懒加载
+#####懒加载(待完善)
 import require
 require.ensure
