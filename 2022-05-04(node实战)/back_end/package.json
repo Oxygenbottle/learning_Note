@@ -1,0 +1,24 @@
+{
+  "name": "back_end",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./dist/bundle.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.17.9",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/plugin-proposal-decorators": "^7.17.9",
+    "@babel/preset-env": "^7.16.11",
+    "babelrc-rollup": "^3.0.0",
+    "core-js": "^3.22.0",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^10.1.1",
+    "rollup": "^2.70.2",
+    "rollup-plugin-babel": "^4.4.0"
+  }
+}

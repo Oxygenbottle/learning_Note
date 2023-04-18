@@ -1,0 +1,9 @@
+{
+    "editor.quickSuggestions": {
+        "strings": true
+    },
+    "prettier.trailingComma": "all",
+    "prettier.vueIndentScriptAndStyle": true,
+    "prettier.withNodeModules": true,
+    "prettier.eslintIntegration": false, //不让prettier使用eslint的代码格式进行校验
+}
