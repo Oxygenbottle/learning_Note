@@ -1,0 +1,69 @@
+$big-font: 40px;
+$small-font: 12px;
+$red: rgb(255, 59, 59);
+$blue: rgb(31, 117, 255);
+// 样式继承，超级好用
+.button%base{
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  touch-action: manipulation;
+  // touch-action的值：
+  // auto : 当触控事件发送在元素上时，由浏览器来决定进行那些操作，比如viewport进行平滑 缩放。
+  // none : 当触控事件发生在元素上时，不进行任何操作
+  // pan-x : 启用单指水平平移手势
+  // pan-y : 启用单指垂直平移手势。
+  // manipulation : 只可以进行滚动和持续缩放操作。如双击缩放等别的手势
+  // pinch-zoom : 启用多手指平移和缩放页面，这可以和任何平移值组合 如 touch-action:pan-x pan-y pinch-zoom;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent; 
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  border-radius: 4px;
+  user-select: none;
+  // user-select - 属性规定是否能选取元素的文本 
+  // 值	  描述
+  // auto	默认。如果浏览器允许，则可以选择文本。
+  // none	防止文本选取。
+  // text	文本可被用户选取。
+  // all	单击选取文本，而不是双击。
+}
+
+.main{
+  color: $blue;
+  .btn-default{
+    @extend %base;
+    color: #333;
+
+  }
+  .header{
+    color: $red;
+    p{
+      font-size: $big-font;
+    }
+  }
+  .content{
+    padding: 10px;
+    span{
+      font-size: $small-font;
+      // 属性嵌套，更好的可读性
+      font: {
+        size: 13px;
+        weight: normal;
+      }
+    }
+    .top{
+      width: 100px;
+      transform: scale(1);
+      transition: all 1s;
+      &:hover{
+        width: 120px;
+      }
+    }
+  }
+}

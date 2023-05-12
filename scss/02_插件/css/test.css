@@ -1,0 +1,52 @@
+.main .button.btn-default {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  border-radius: 4px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.main {
+  color: rgb(31, 117, 255);
+}
+.main .btn-default {
+  color: #333;
+}
+.main .header {
+  color: rgb(255, 59, 59);
+}
+.main .header p {
+  font-size: 40px;
+}
+.main .content {
+  padding: 10px;
+}
+.main .content span {
+  font-size: 12px;
+  font-size: 13px;
+  font-weight: normal;
+}
+.main .content .top {
+  width: 100px;
+  -webkit-transform: scale(1);
+          transform: scale(1);
+  -webkit-transition: all 1s;
+  transition: all 1s;
+}
+.main .content .top:hover {
+  width: 120px;
+}/*# sourceMappingURL=test.css.map */
