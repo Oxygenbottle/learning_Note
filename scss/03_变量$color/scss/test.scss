@@ -1,0 +1,52 @@
+$color: #f00;
+$border-color: #f2f2f2;
+$border_color: #000;
+$border_width: 1px;
+$font-size: 16px;
+// 所有变量都需要先定义，再使用
+.container{
+    color: $color;
+    // border_color == border-color，写在后面的会替换前面的变量
+    border-color: $border-color; 
+}
+
+// 1、 局部变量
+.container_1{
+    $font-size: 11px;
+    // 局部变量提升全局变量 -- !global
+    $color_glo: #333 !global; 
+    font-size: $font-size;
+}
+// 2、 全局变量
+.container_2{
+    font-size: $font-size;
+    color: $color_glo
+}
+$layer-index: 10;
+$border-width: 3px;
+$font-base-family: 'Open Sans', Helvetica, Sans-serif;
+$top-bg-color: rgba(255,147,29,.8);
+$block-back-padding: 6px 10px 6px 10px;
+$blank-mode: true;
+$var: null;
+$color-map: (color: #fa0000, color2: #fbe200, color3: #85d7eb);
+
+$font: (serif: "Helvetica Neue", monospace: 'Consolas');
+.container_3{
+    @if $blank-mode{
+        background-color: #000;
+    }
+    @else{
+        background-color: #fff;
+    }
+    content: type-of($var);
+    content: length($var);
+    color: map-get($color-map, color2 );
+    font: 19px bold map-get($font, 'sans' )//如果没有Key则默认为空
+}
+// 默认值
+$color_1: #333;
+$color_1: #f00 !default; // 变量有值则取值，没有就取默认值
+.container{
+    color: $color_1;
+}

@@ -1,0 +1,14 @@
+/* :root 是一个伪类，表示文档根元素，所有主流浏览器均支持。
+在:root中声明相当于全局属性，只要当前页面引用了:root segment所在文件，
+都可以使用var()来引用。   */
+:root {
+  --color: #f00;
+}
+
+body {
+  --border-color: #f2f2f2;
+}
+
+.header {
+  --background-color: #f8f8f8;
+}

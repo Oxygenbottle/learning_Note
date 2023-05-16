@@ -1,0 +1,25 @@
+.container {
+  color: #f00;
+  border-color: #000;
+}
+
+.container_1 {
+  font-size: 11px;
+}
+
+.container_2 {
+  font-size: 16px;
+  color: #333;
+}
+
+.container_3 {
+  background-color: #000;
+  content: null;
+  content: 1;
+  color: #fbe200;
+  font: 19px bold;
+}
+
+.container {
+  color: #333;
+}/*# sourceMappingURL=test.css.map */
