@@ -12,3 +12,7 @@ body {
 .header {
   --background-color: #f8f8f8;
 }
+
+.container {
+  color: var(--color);
+}

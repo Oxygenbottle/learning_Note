@@ -1,0 +1,80 @@
+// 引入
+@import 'public';
+// 以下会被当做普通css
+// @import url(public.scss);
+// @import 'http://xxx.xxx'
+
+p{
+  @import 'shop.scss';
+  font-size: $font-base-size;
+  color: $shop-font-color;
+}
+
+// 混入
+@mixin xxx{
+  // 写所有的css样式
+  // 大部分scss语法
+}
+
+@mixin button{
+  width: 100vw;
+  height: 30px;
+  border-radius: 20px;
+  background-color: #fff;
+  border: 1px solid #000;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+  line-height: 30px;
+  .button-warn{
+    background-color: #f00;
+  }
+}
+
+.check_button{
+  @include button;
+}
+
+// 混入传参
+@mixin flex-align($aitem) {
+  align-items: $aitem;
+}
+// 传参可以指定默认值
+@mixin block-padding($top,$right,$bottom,$left){
+  padding-top: $top;
+  padding-right: $right;
+  padding-bottom: $bottom;
+  padding-left: $left;
+}
+@mixin padding-noparams($top:0,$right:0,$bottom:90,$left:10){
+  padding-top: $top;
+  padding-right: $right;
+  padding-bottom: $bottom;
+  padding-left: $left;
+}
+
+.container{
+  // @include flex-align(center);
+  @include flex-align($aitem:center);
+  // @include block-padding(10px, 20px, 30px, 40px)
+  // @include block-padding(10px, 20px,0,0)
+  // 指定参数传参
+  @include block-padding($right: 10px, $bottom:20px,$top:0,$left:0);
+}
+.container{
+  @include padding-noparams()
+}
+
+
+/**
+  定义线性渐变
+  @params $direction 方向
+  @params $gradients 颜色过度的值列表
+*/
+@mixin linear-gradient($direction,$gradients...){
+  background-color: nth($gradients,1);
+  background-image: linear-gradient($direction, $gradients);
+}
+.container_2{
+  @include linear-gradient(to right, #f00, orange, yellow)
+}
