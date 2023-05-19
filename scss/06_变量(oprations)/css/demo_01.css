@@ -1,0 +1,74 @@
+@charset "UTF-8";
+/** 关系（比较）运行符号
+<（lt）    小于
+>（gt）    大于
+<=（lte）  小于等于
+>=（gte）  大于等于
+*/
+/** 逻辑运行符
+and 与
+or  或
+not 非
+*/
+.container {
+  background-color: red;
+}
+
+div {
+  font-size: 16px;
+  border-color: red;
+}
+
+/** 数字操作符
++   加
+-   减
+*   乘
+/   除
+%   取余
+数字类型包括：10 13px 15%
+*/
+.container_02 {
+  /* =================== + 运算  ====================*/
+  width: 70;
+  height: 70%;
+  padding-top: 60px;
+  width: 23.3333333333px;
+  /* =================== - 运算  ====================*/
+  width: 20;
+  width: 20%;
+  width: 10px;
+  /* =================== - 运算  ====================*/
+  width: 150;
+  width: 50%;
+  width: 50px;
+  /*width: 10% * 50*;   相同单位会出现报错*/
+  /*width: 10px * 30px; */
+  /* =================== / 运算  ====================*/
+  width: 10/5;
+  width: 2;
+  width: 100;
+  width: 25;
+  width: 5px;
+  /* =================== % 运算  ====================*/
+  width: 0;
+  width: 2px;
+  width: 2px;
+  width: 2%;
+  content: "foobar";
+  content: barfoo;
+  content: foobar;
+  content: "foobar";
+}
+
+/* 
+    插值语句
+    选择器、属性名、属性值、注释。。。
+**/
+p {
+  font: 12px/30px Helvetica;
+}
+
+a.danger {
+  /* @author: 测试**/
+  border-color: #f00;
+}/*# sourceMappingURL=demo_01.css.map */
