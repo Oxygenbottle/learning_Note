@@ -1,0 +1,30 @@
+.alert-success, .alert-info, .important, .alert-danger {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.important, .alert-danger {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.alert-info {
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+}
+
+.alert-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+
+.alert-danger {
+  color: #f00;
+  background-color: #a94442;
+  border-color: #ebccd1;
+}/*# sourceMappingURL=demo_01.css.map */

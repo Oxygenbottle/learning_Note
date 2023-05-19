@@ -78,3 +78,10 @@ p{
 .container_2{
   @include linear-gradient(to right, #f00, orange, yellow)
 }
+
+// 总结
+// mixin 是可以重复使用的一组CSS声明
+// mixin 有助于减少重复代码
+// 混入指令可以包含所有的CSS规则，绝大部分的Sass规则，甚至通过参数功能引入变量。
+// 使用参数时建议加上默认值
+

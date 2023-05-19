@@ -1,0 +1,35 @@
+// 普通继承会将 继承对象也打包
+// 但是有些场景不需要父类样式
+// 可以用占位符来替换 .alert 改成 %alert
+%alert{
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.important{
+  @extend %alert;
+  font-weight: bold;
+  font-size: 14px;
+}
+.alert-info{
+  @extend %alert;
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+}
+.alert-success{
+  @extend %alert;
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+.alert-warning{}
+.alert-danger{
+  @extend .important;
+  color: #f00;
+  background-color: #a94442;
+  border-color: #ebccd1;
+}
