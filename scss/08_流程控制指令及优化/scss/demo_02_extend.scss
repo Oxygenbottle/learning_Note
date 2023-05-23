@@ -1,0 +1,38 @@
+%triangle{
+  width: 0px;
+  height: 0px;
+  display: inline-block;
+}
+@mixin triangle($direction: top, $size:30px,$border-color: black) {
+  @extend %triangle;
+  border-width: $size;
+  border-#{$direction}-width: 0;
+  @if($direction == 'top') {
+    border-color: transparent transparent $border-color transparent;
+    border-style: dashed dashed solid dashed;
+  }
+  @else if($direction == 'right') {
+    border-color: transparent transparent transparent $border-color;
+    border-style: dashed dashed solid dashed;
+  }
+  @else if($direction == 'left') {
+    border-color: transparent $border-color transparent transparent;
+    border-style: dashed dashed solid dashed;
+  }
+  @else if($direction == 'bottom') {
+    border-color: $border-color transparent transparent transparent;
+    border-style: dashed dashed solid dashed;
+  }
+}
+.demo_01{
+  @include triangle('top',15px, red)
+}
+.demo_02{
+  @include triangle('right',20px, green)
+}
+.demo_03{
+  @include triangle('bottom',25px, yellow)
+}
+.demo_04{
+  @include triangle('left',30px, blue)
+}

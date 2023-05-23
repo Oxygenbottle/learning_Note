@@ -1,0 +1,69 @@
+/************************* for ******************************/
+@for $l from 1 to 4 {
+  .p#{$l} {
+    content: $l;
+    width: 10px * $l;
+  }
+}
+@for $l from 1 through 4 {
+  .span#{$l} {
+    content: $l;
+    width: 10px * $l;
+  }
+}
+
+#loading {
+  position: fixed;
+  top: 200px;
+  left: 46%;
+  @for $l from 1 through 5 {
+    span:nth-child(#{$l}) {
+      left: $l * 25px;
+      animation-delay: 0.1s * $l * 2;
+    }
+  }
+}
+#loading span {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: blue;
+  border-radius: 50%;
+  animation: loading 1s infinite ease-in-out;
+}
+
+@keyframes loading {
+  0% {
+    opacity: 0.3;
+    transform: translateY(0px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 0.3;
+    transform: translateY(0px);
+  }
+}
+/************************* each ******************************/
+$var: 10;
+$color-list: red green blue yellow magenta;
+@each $color in $color-list {
+  $value: index($color-list, $color);
+  .p0 {
+    content: #{$color};
+    content: $value;
+  }
+}
+
+/************************* while ******************************/
+$column: 0;
+@while $column < 12 {
+  .col-sm-#{$column} {
+    width: 100px * $column;
+    // width: $column / 12 * 100#{"%"};
+    width: unquote($string: $column / 12 * 100 + "%");
+  }
+  $column: $column + 1;
+}

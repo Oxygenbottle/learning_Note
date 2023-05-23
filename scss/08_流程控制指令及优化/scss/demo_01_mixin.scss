@@ -1,8 +1,4 @@
-/*
-  @if
-  @else if   
-  @else
-*/
+
 @mixin triangle($direction: top, $size:30px,$border-color: black) {
   width: 0px;
   height: 0px;

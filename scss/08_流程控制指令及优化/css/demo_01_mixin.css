@@ -1,0 +1,39 @@
+.demo_01 {
+  width: 0px;
+  height: 0px;
+  display: inline-block;
+  border-width: 15px;
+  border-top-width: 0;
+  border-color: transparent transparent red transparent;
+  border-style: dashed dashed solid dashed;
+}
+
+.demo_02 {
+  width: 0px;
+  height: 0px;
+  display: inline-block;
+  border-width: 20px;
+  border-right-width: 0;
+  border-color: transparent transparent transparent green;
+  border-style: dashed dashed solid dashed;
+}
+
+.demo_03 {
+  width: 0px;
+  height: 0px;
+  display: inline-block;
+  border-width: 25px;
+  border-bottom-width: 0;
+  border-color: yellow transparent transparent transparent;
+  border-style: dashed dashed solid dashed;
+}
+
+.demo_04 {
+  width: 0px;
+  height: 0px;
+  display: inline-block;
+  border-width: 30px;
+  border-left-width: 0;
+  border-color: transparent blue transparent transparent;
+  border-style: dashed dashed solid dashed;
+}/*# sourceMappingURL=demo_01_mixin.css.map */
