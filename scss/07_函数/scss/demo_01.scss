@@ -1,0 +1,81 @@
+/*
+  函数
+*/
+$font-sizes: ('small':12px ,'normal': 18px, 'large': 24px);
+$padding: (top: 10px, right: 20px, bottom: 10px, left: 30px);
+$color: #f00;
+p{
+  height: 30px;
+  &:after{
+    content: quote(这是里面的内容);
+    // map函数
+    font-size: map-get($map: $font-sizes, $key: normal);
+    @if map-has-key($map: $padding, $key: right){
+      padding-right: map-get($map: $padding, $key: right)
+    }
+
+    content: map-keys($map: $font-sizes) + "" + map-values($map: $font-sizes);
+
+  }
+  .stringFn{
+    // string函数
+    background-color: unquote($string: '#f00');
+    z-index: str-length("sass学习");
+  }
+  .selector{
+    // selector选择器函数
+    background-color: #000;
+    content: selector-append('.a','.b','.c') + '';
+    content: selector-unify('.a','.disabled') + '';
+  }
+  //自检函数
+  .isHas{
+    @if variable-exists(color){
+      color: $color;
+    }
+    @else{
+      content: '$color不存在';
+    }
+    @if mixin-exists(padding) {
+      @include padding($left: 10px, $right: 20px);
+    }
+  }
+  .text{
+    // Math函数
+    z-index: abs($number: -15);
+    z-index: ceil(5.8);
+    z-index: max(5,1,8,2);
+    z-index: random(); // 0~1 随机
+  }
+  .list{
+    // list函数
+    z-index: length(123px);
+    z-index: length(12 5 92);
+    padding: append(10px 10px, 20px);
+    color: nth($list: red blue green, $n: 2)
+  }
+  .map{
+
+  }
+}
+.p0{
+  background-color: #5c7129;
+}
+.p1{
+  /*
+    lighten($color,$amount)
+  */
+  background-color: lighten(#5c7129,30%);
+}
+.p2{
+  /*
+    lighten($color,$amount)
+  */
+  background-color: darken(#5c7129,15%);
+}
+.p3{
+  /*
+    lighten($color,$amount)
+  */
+  background-color:  opacify(rgba( #5c7129,  0.2),0.6);
+}
