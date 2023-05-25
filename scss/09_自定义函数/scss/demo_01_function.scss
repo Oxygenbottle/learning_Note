@@ -1,0 +1,34 @@
+@import "_public";
+
+@function background-linear-gradient2($direction, $gradients...) {
+  @return linear-gradient($direction, $gradients);
+}
+// 正常传参
+body {
+  background-image: background-linear-gradient(to right, blue, green);
+}
+
+// 按照Key进行传参
+.body2 {
+  background-image: background-linear-gradient(
+    $start-color: red,
+    $direction: to right
+  );
+}
+
+.body3 {
+  background-image: background-linear-gradient2(to right, red, blue, green);
+}
+
+.top {
+  width: min(50px, 30px, 80px);
+  width: min($width...);
+}
+
+/*
+  总结
+  混入mixin和函数function的区别
+  *混入mixin主要通过传递参数的方式输出多样化的样式，为了可以实现代码复用。
+  *函数的功能主要是通过传递参数后，经过函数内部的计算，最后@return输出一个值。
+  
+**/

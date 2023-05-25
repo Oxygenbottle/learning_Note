@@ -1,0 +1,17 @@
+@use "../uses/common" with($font-size: 30px);
+/* 
+  @use 'url' with(params) 可以更改默认传参
+**/
+@use "../uses/global" as g1;
+@use "../uses/global" as g2;
+// @use "../css/about.css";
+// 没有命名，后引入的模块会覆盖前模块的样式
+// $- 开头可以定义私有常量，来防止多模块同名常量污染环境
+body {
+  font-size: common.$font-size;
+  // font-size: g1.$-font-size;  *** 报错
+  width: common.column-width(3, 12);
+  @include common.bgColor;
+  @include g1.base(#fff);
+  @include g2.base(#000);
+}

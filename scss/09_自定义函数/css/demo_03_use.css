@@ -1,0 +1,45 @@
+@charset "UTF-8";
+* {
+  margin: 0;
+  padding: 0;
+  font-size: 30px;
+  color: #333;
+}
+
+.gclass {
+  background-color: #f00;
+}
+
+/* 
+  @use 'url' with(params) 可以更改默认传参
+**/
+body {
+  font-size: 30px;
+  width: 25%;
+  background-color: #f2f2f2;
+  color: #fff;
+  font-size: 30px;
+  color: #000;
+  font-size: 30px;
+}
+
+/*
+  Sass @use的使用
+  从其他Sass样式表加载mixin,function和变量，并将来自多个样式表的CSS组合在一起，
+  @use加载的样式表被称为"模块"，多次引入只包含一次。
+  @use也可以看做是对@import的增强
+
+  语法
+  @use '<url>' []
+
+**/
+/*
+  总结
+  @use 引入同一个文件多次，不会重复引入，而@import会重复引入
+  @use 引入的文件是一个模块，默认以文件名作为模块名，可通过 as alias 取别名
+  @use 引入多个文件时，每个文件都是单独的模块，相同变量名不会覆盖，通过模块名访问，而@import变量会被覆盖
+  @use 方式可通过 @use 'xxx' as * 来取消命名空间，不建议
+  @use 模块内可通过 $- 或 $ 来定义私有成员，也就是说 - 开头的 variables mixins functions不会被引入
+  @use 模块内变量通过 !default 定义默认值，引入时可以通过with(xxx) 的方式修改
+  可定义 -index.scss 或者 _index.scss 来合并多个scss文件，让最终项目引入的区域干净整洁
+**//*# sourceMappingURL=demo_03_use.css.map */

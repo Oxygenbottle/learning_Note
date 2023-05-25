@@ -1,0 +1,26 @@
+$width: 50px, 30px, 80px, 20px;
+
+@function row-cols-width($column) {
+  // percentage($number) //=> number 需要确定传参为数字
+  @return percentage(calc(1 / $column));
+}
+
+@for $l from 1 to 6 {
+  .row-cols-#{$l} > * {
+    content: $l;
+    width: row-cols-width($l);
+  }
+}
+
+/**
+  定义线性渐变
+  @params $direction 方向
+  @params $gradients 颜色过度列表
+*/
+@function background-linear-gradient(
+  $direction,
+  $start-color,
+  $end-color: blue
+) {
+  @return linear-gradient($direction, $start-color, $end-color);
+}

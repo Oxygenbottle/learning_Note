@@ -1,0 +1,12 @@
+$theme: "light";
+.container {
+  @if $theme == "light" {
+    color: #000;
+  } @else {
+    color: #fff;
+  }
+}
+// 三元改写
+.container {
+  color: if($theme== "light", #000, #fff);
+}

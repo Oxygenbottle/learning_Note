@@ -1,0 +1,58 @@
+@charset "UTF-8";
+.row-cols-1 > * {
+  content: 1;
+  width: 100%;
+}
+
+.row-cols-2 > * {
+  content: 2;
+  width: 50%;
+}
+
+.row-cols-3 > * {
+  content: 3;
+  width: 33.3333333333%;
+}
+
+.row-cols-4 > * {
+  content: 4;
+  width: 25%;
+}
+
+.row-cols-5 > * {
+  content: 5;
+  width: 20%;
+}
+
+/**
+  定义线性渐变
+  @params $direction 方向
+  @params $gradients 颜色过度列表
+*/
+body {
+  background-image: -webkit-gradient(linear, left top, right top, from(blue), to(green));
+  background-image: linear-gradient(to right, blue, green);
+}
+
+.body2 {
+  background-image: -webkit-gradient(linear, left top, right top, from(red), to(blue));
+  background-image: linear-gradient(to right, red, blue);
+}
+
+.body3 {
+  background-image: -webkit-gradient(linear, left top, right top, from(red), color-stop(blue), to(green));
+  background-image: linear-gradient(to right, red, blue, green);
+}
+
+.top {
+  width: 30px;
+  width: 20px;
+}
+
+/*
+  总结
+  混入mixin和函数function的区别
+  *混入mixin主要通过传递参数的方式输出多样化的样式，为了可以实现代码复用。
+  *函数的功能主要是通过传递参数后，经过函数内部的计算，最后@return输出一个值。
+
+**//*# sourceMappingURL=demo_01_function.css.map */
