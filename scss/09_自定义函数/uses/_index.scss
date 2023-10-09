@@ -14,4 +14,5 @@ body {
   @include common.bgColor;
   @include g1.base(#fff);
   @include g2.base(#000);
+  display: flex;
 }

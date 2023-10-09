@@ -1,0 +1,3 @@
+// @forward "../uses/common" show $font-size, column-width;
+@forward "../uses/common" as c-* hide c-bgColor with($font-size: 32px);
+@forward "../uses/global" as g-*;

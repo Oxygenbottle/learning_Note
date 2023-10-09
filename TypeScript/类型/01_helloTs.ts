@@ -15,4 +15,5 @@ function sum(a: number, b: number) {
     return a + b;
 }
 
-sum(a:123, b:456);
+let temp = sum(123, 456);
+console.log('sum result', temp);

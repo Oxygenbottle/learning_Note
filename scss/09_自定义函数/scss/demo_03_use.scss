@@ -8,7 +8,7 @@
   @use '<url>' []
   
 **/
-@use "../uses/index";
+@use "../uses/index" as index;
 /*
   总结
   @use 引入同一个文件多次，不会重复引入，而@import会重复引入

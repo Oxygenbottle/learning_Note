@@ -1,0 +1,35 @@
+@charset "UTF-8";
+* {
+  margin: 0;
+  padding: 0;
+  font-size: 32px;
+  color: #333;
+}
+
+.gclass {
+  background-color: #f00;
+}
+
+/*
+  Sass @forward的使用
+  通过 @forward 加载一个模块的成员，并将这些成员当做自己的成员对外暴露出去，类似于es6的export...
+  通常用于跨多个文件组织Sass库
+  选择性转发 show 、 hide
+  定义 前缀 as c-*   使用 c-xxx 注意： hide c-xxx 
+**/
+.test {
+  font-size: 28px;
+}
+
+.test2 {
+  font-size: 32px;
+}
+
+body {
+  font-size: 28px;
+  width: 25%;
+  color: #fff;
+  font-size: 30px;
+  color: #000;
+  font-size: 30px;
+}/*# sourceMappingURL=demo_4_forward.css.map */

@@ -21,6 +21,9 @@ body {
   font-size: 30px;
   color: #000;
   font-size: 30px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 
 /*
