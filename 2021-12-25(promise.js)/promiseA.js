@@ -61,9 +61,7 @@ class MyPromise {
     // 操作then方法， .then( res=> { ... } ，平时不传，但是catch取的就是onRejected)
     then(onFulfilled, onRejected) {
         // 先判断是否是方法，否则直接传出，避免后续其他问题
-        const realOnFulfilled = this.isFunction(onFulfilled) ? onFulfilled : (value) => {
-            return value;
-        }
+        const realOnFulfilled = this.isFunction(onFulfilled) ? onFulfilled : val => val;
 
         const realOnRejected = this.isFunction(onRejected) ? onRejected : (reason) => {
             throw reason;

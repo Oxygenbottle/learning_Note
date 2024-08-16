@@ -1,0 +1,21 @@
+function curry(fn) {
+  let len = fn.length;
+  return function curried(...args) {
+    if (args.length >= len) {
+      return fn.apply(this, args);
+    } else {
+      return function (...args2) {
+        return curried.apply(this, args.concat(args2));
+      };
+    }
+  };
+}
+
+function add(a, b) {
+  return a + b;
+}
+
+var curryAdd = curry(add);
+
+console.log(curryAdd(1, 2));
+console.log(curryAdd(1)(2)(3));

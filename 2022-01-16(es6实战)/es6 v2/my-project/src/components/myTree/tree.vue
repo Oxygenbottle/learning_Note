@@ -1,5 +1,5 @@
 <script>
-import { refs } from "./refs";
+import refs from "./refs.js";
 let count = 0;
 export default {
   name: 'tree',
